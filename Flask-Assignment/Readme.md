@@ -1,8 +1,4 @@
-Here’s a **ready-to-use `README.md`** for your `flask-mongo-app` repo:
 
----
-
-```markdown
 # Flask + MongoDB Atlas + JSON API
 
 This project is a simple Flask application that demonstrates:
