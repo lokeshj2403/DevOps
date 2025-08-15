@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flask Assignment 2 — Express Frontend</title>
+  <link rel="icon" href="https://www.google.com/favicon.ico" type="image/x-icon">
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'; margin: 40px; }
+    .card { max-width: 560px; padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.08); border: 1px solid #eee; }
+    label { display:block; margin-top: 12px; font-weight: 600; }
+    input, textarea { width: 100%; padding: 10px 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #ccc; }
+    button { margin-top: 16px; padding: 10px 16px; border-radius: 12px; border: 0; cursor: pointer; }
+    .success { color: #0a7c2f; }
+    .error { color: #b00020; }
+    .muted { color: #666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Submit Details (Flask Assignment 2 Style)</h2>
+    <p class="muted">This form posts to <code>/api/submit</code> on the Express server, which proxies to the Flask backend.</p>
+    <form id="dataForm">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="4" required></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('dataForm');
+    const statusEl = document.getElementById('status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = 'Submitting...';
+      statusEl.className = 'muted';
+
+      const payload = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value,
+      };
+
+      try {
+        const resp = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if (resp.ok) {
+          statusEl.textContent = data?.message || 'Data submitted successfully!';
+          statusEl.className = 'success';
+          form.reset();
+        } else {
+          statusEl.textContent = data?.error || 'Submission failed';
+          statusEl.className = 'error';
+        }
+      } catch (err) {
+        statusEl.textContent = err.message;
+        statusEl.className = 'error';
+      }
+    });
+  </script>
+</body>
+</html>
